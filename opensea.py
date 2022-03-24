@@ -1,7 +1,8 @@
 import PySimpleGUI as sg
 import selenium
+from selenium import webdriver
 from selenium.webdriver import Firefox
-from selenium.webdriver import execute_script
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
@@ -51,12 +52,13 @@ driver = Firefox(service=service, options=options)
 # Opening Website
 
 # driver.get("https://opensea.io/collection/boredapeyachtclub")
-driver.get("https://opensea.io/collection/bored-ape-kennel-club?search[sortAscending]=true&search[sortBy]=PRICE")
+# driver.get("https://opensea.io/collection/bored-ape-kennel-club?search[sortAscending]=true&search[sortBy]=PRICE")
+driver.get("https://opensea.io/Slyracoon23")
 # driver.maximize_window()
-time.sleep(10)
+time.sleep(5)
 
 
-while True:
+
 # #Getting Artist Name
 
 # Artist_name = driver.find_element_by_class_name("AccountLinkreact__DivContainer-sc-4gdciy-0").get_attribute('textContent')
@@ -67,7 +69,9 @@ while True:
 
 # grid = driver.find_element_by_xpath(" /html/body/div[1]/div/main/div/div/div[3]/div/div/div/div[3]/div[3]/div[2]/div/div")
 
+while True:
     gridcells = driver.find_elements(By.XPATH, "//div[@role='gridcell']")
+
 
     for gridcell in gridcells:
 
@@ -77,9 +81,28 @@ while True:
 
         print(nft_type, tokenId, orderSide, price, sep=",")
 
+        # driver.execute_script("window.scrollTo(0, 250);")
+    
 
-    execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    time.sleep(10)
+
+
+
+    webdriver.ActionChains(driver).send_keys(Keys.PAGE_DOWN).perform()
+    time.sleep(2)
+
+    scrollHeight = driver.execute_script("return document.documentElement.scrollHeight")
+    clientHeight = driver.execute_script("return document.documentElement.clientHeight")
+    scrollTop = driver.execute_script("return document.documentElement.scrollTop")
+
+ 
+    print(scrollHeight, clientHeight, scrollTop, sep=',')
+
+    if abs(scrollHeight - clientHeight - scrollTop) < 1:
+        break
+
+    time.sleep(8)
+
+
 
 
 
