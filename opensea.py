@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 import selenium
 from selenium.webdriver import Firefox
+from selenium.webdriver import execute_script
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
@@ -49,10 +50,13 @@ driver = Firefox(service=service, options=options)
 
 # Opening Website
 
-driver.get("https://opensea.io/collection/boredapeyachtclub")
+# driver.get("https://opensea.io/collection/boredapeyachtclub")
+driver.get("https://opensea.io/collection/bored-ape-kennel-club?search[sortAscending]=true&search[sortBy]=PRICE")
 # driver.maximize_window()
-time.sleep(5)
+time.sleep(10)
 
+
+while True:
 # #Getting Artist Name
 
 # Artist_name = driver.find_element_by_class_name("AccountLinkreact__DivContainer-sc-4gdciy-0").get_attribute('textContent')
@@ -63,15 +67,21 @@ time.sleep(5)
 
 # grid = driver.find_element_by_xpath(" /html/body/div[1]/div/main/div/div/div[3]/div/div/div/div[3]/div[3]/div[2]/div/div")
 
-gridcells = driver.find_elements(By.XPATH, "//div[@role='gridcell']")
+    gridcells = driver.find_elements(By.XPATH, "//div[@role='gridcell']")
 
-for gridcell in gridcells:
+    for gridcell in gridcells:
 
-    nft_info = (gridcell.text).splitlines()
+        nft_info = (gridcell.text).splitlines()
 
-    nft_type, tokenId, orderSide, price, *_ = nft_info
+        nft_type, tokenId, orderSide, price, *_ = nft_info
 
-    print(nft_type, tokenId, orderSide, price, sep=",")
+        print(nft_type, tokenId, orderSide, price, sep=",")
+
+
+    execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    time.sleep(10)
+
+
 
 
 # #Making Folder for Downloading Images
