@@ -2,6 +2,7 @@ import requests
 import json
 import sys
 import csv
+import time
 
 contractAddress = "0x025C6da5BD0e6A5dd1350fda9e3B6a614B205a1F" # ApeToken Contract
 topic = sys.argv[1]
@@ -23,16 +24,39 @@ blockNumber = int(res.json()["result"],16)
 batch_size =  10
 tokenIDs_claimed = set()
 
-for i in range(startBlock, blockNumber, batch_size):
-    res = requests.get(f'https://api.etherscan.io/api?module=logs&action=getLogs&fromBlock={i}&toBlock={i+batch_size}&address={contractAddress}&topic0={topic}&apikey={YourApiKeyToken}')
 
-    result = res.json()
+range_iter = iter(range(startBlock, blockNumber, batch_size))
+
+i = next(range_iter)
+while True:
+    try:
+        res = requests.get(f'https://api.etherscan.io/api?module=logs&action=getLogs&fromBlock={i}&toBlock={i+batch_size}&address={contractAddress}&topic0={topic}&apikey={YourApiKeyToken}')
+
+        result = res.json()
 
 
-    for event in result["result"]:
-        token_claimed =int(event["topics"][1],16)
-        print(f'{sys.argv[3]} tokenID: {token_claimed} claimed')
-        tokenIDs_claimed.add(token_claimed)
+        for event in result["result"]:
+            token_claimed =int(event["topics"][1],16)
+            print(f'{sys.argv[3]} tokenID: {token_claimed} claimed')
+            tokenIDs_claimed.add(token_claimed)
+            
+        i = next(range_iter)
+    except StopIteration:
+        break
+
+    except:
+        time.sleep(2)
+
+
+
+
+
+# for i in range(startBlock, blockNumber, batch_size):
+#     if not query_events(i):
+#         time.sleep()
+
+        
+
 
 print(f'Total Claimed: {len(tokenIDs_claimed)}')
 
